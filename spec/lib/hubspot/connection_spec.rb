@@ -12,8 +12,8 @@ describe Hubspot::Connection do
       @http_response.body { 'mocked response' }
 
       mock(Hubspot::Connection).generate_url(@url, {}) { @url }
-      mock(Hubspot::Connection).get(@url, format: :json) { @http_response }
-      Hubspot::Connection.get_json(@url, {})
+      mock(Hubspot::Connection).get(@url, headers: {'Authorization' => 'Bearer abc123'}, format: :json) { @http_response }
+      Hubspot::Connection.get_json(@url, access_token: 'abc123')
     end
   end
 
@@ -25,8 +25,8 @@ describe Hubspot::Connection do
       @http_response.body { 'mocked response' }
 
       mock(Hubspot::Connection).generate_url(@url, {}) { @url }
-      mock(Hubspot::Connection).post(@url, body: "{}", headers: {"Content-Type"=>"application/json"}, format: :json) { @http_response }
-      Hubspot::Connection.post_json(@url, params: {}, body: {})
+      mock(Hubspot::Connection).post(@url, body: '{}', headers: {'Authorization' => 'Bearer abc123', 'Content-Type' => 'application/json'}, format: :json) { @http_response }
+      Hubspot::Connection.post_json(@url, params: {}, body: {}, access_token: 'abc123')
     end
   end
 
@@ -37,8 +37,8 @@ describe Hubspot::Connection do
       @http_response.body { 'mocked response' }
 
       mock(Hubspot::Connection).generate_url(@url, {}) { @url }
-      mock(Hubspot::Connection).delete(@url, format: :json) { @http_response }
-      Hubspot::Connection.delete_json(@url, {})
+      mock(Hubspot::Connection).delete(@url, headers: {'Authorization' => 'Bearer abc123'}, format: :json) { @http_response }
+      Hubspot::Connection.delete_json(@url, access_token: 'abc123')
     end
   end
 

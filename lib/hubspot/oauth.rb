@@ -2,7 +2,9 @@ require 'httparty'
 module Hubspot
   class OAuth < Connection
     include HTTParty
-    DEFAULT_OAUTH_HEADERS = {"Content-Type" => "application/x-www-form-urlencoded;charset=utf-8"}
+
+    DEFAULT_OAUTH_HEADERS = {'Content-Type' => 'application/x-www-form-urlencoded;charset=utf-8'}
+
     class << self
       def refresh(params)
         params.stringify_keys!
@@ -39,7 +41,7 @@ module Hubspot
       end
 
       def oauth_url
-        oauth_url = Hubspot::Config.base_url + "/oauth/v1/token"
+        Hubspot::Config.base_url + "/oauth/v1/token"
       end
     end
   end
