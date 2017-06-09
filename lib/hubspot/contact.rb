@@ -147,22 +147,24 @@ module Hubspot
     attr_reader :is_contact
 
     def initialize(response_hash)
-      props = response_hash['properties']
-      @properties = Hubspot::Utils.properties_to_hash(props) unless props.blank?
-      @is_contact = response_hash["is-contact"]
+      response_hash = response_hash.deep_dup
+      response_hash['properties'] ||= {}
+      response_hash['properties'] = Hubspot::Utils.properties_to_hash(response_hash['properties'])
+      @properties = response_hash
+      @is_contact = response_hash['is-contact']
       @vid = response_hash['vid']
     end
 
     def [](property)
-      @properties[property]
+      @properties[property] || @properties['properties'][property]
     end
 
     def email
-      @properties['email']
+      @properties['properties']['email'] || identity_email
     end
 
     def utk
-      @properties['usertoken']
+      @properties['properties']['usertoken']
     end
 
     def is_new=(val)
@@ -174,9 +176,9 @@ module Hubspot
     # @param params [Hash] hash of properties to update
     # @return [Hubspot::Contact] self
     def update!(params)
-      query = {"properties" => Hubspot::Utils.hash_to_properties(params.stringify_keys!)}
+      query = {'properties' => Hubspot::Utils.hash_to_properties(params.stringify_keys!)}
       Hubspot::Connection.post_json(UPDATE_CONTACT_PATH, params: { contact_id: vid }, body: query)
-      @properties.merge!(params)
+      @properties['properties'].merge!(params)
       self
     end
 
@@ -190,6 +192,12 @@ module Hubspot
 
     def destroyed?
       !!@destroyed
+    end
+
+    def identity_email
+      identities = @properties['identities'] || []
+      identity = identities.find {|i| i['type'] == 'EMAIL' }
+      identity ? identity['value'] : nil
     end
   end
 end

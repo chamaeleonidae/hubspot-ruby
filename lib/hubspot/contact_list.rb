@@ -28,11 +28,13 @@ module Hubspot
       def all(opts={})
         static = opts.delete(:static) { false }
         dynamic = opts.delete(:dynamic) { false }
+        paged = opts.delete(:paged) { false }
 
         # NOTE: As opposed of what the documentation says, getting the static or dynamic lists returns all the lists, not only 20 lists
         path = LISTS_PATH + (static ? '/static' : dynamic ? '/dynamic' : '')
         response = Hubspot::Connection.get_json(path, opts)
-        response['lists'].map { |l| new(l) }
+        response['lists'].map! { |l| new(l) }
+        paged ? response : response['lists']
       end
 
       # {http://developers.hubspot.com/docs/methods/lists/get_list}

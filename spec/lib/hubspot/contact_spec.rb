@@ -109,10 +109,10 @@ describe Hubspot::Contact do
 
     it 'creates and updates contacts' do
       contact = Hubspot::Contact.find_by_id existing_contact.vid
-      expect(contact.properties['firstname']).to eql 'Neo'
+      expect(contact['firstname']).to eql 'Neo'
       latest_contact_email = Hubspot::Contact.all(recent: true).first.email
       new_contact = Hubspot::Contact.find_by_email(latest_contact_email)
-      expect(new_contact.properties['firstname']).to eql 'Smith'
+      expect(new_contact['firstname']).to eql 'Smith'
     end
   end
 
