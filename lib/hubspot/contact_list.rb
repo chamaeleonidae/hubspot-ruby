@@ -39,7 +39,7 @@ module Hubspot
 
       # {http://developers.hubspot.com/docs/methods/lists/get_list}
       # {http://developers.hubspot.com/docs/methods/lists/get_batch_lists}
-      def find(ids)
+      def find(ids, opts)
         batch_mode, path, params = case ids
         when Integer then [false, LIST_PATH, { list_id: ids }]
         when String then [false, LIST_PATH, { list_id: ids.to_i }]
@@ -47,7 +47,7 @@ module Hubspot
         else raise Hubspot::InvalidParams, 'expecting Integer or Array of Integers parameter'
         end
 
-        response = Hubspot::Connection.get_json(path, params)
+        response = Hubspot::Connection.get_json(path, params.merge(opts))
         batch_mode ? response['lists'].map { |l| new(l) } : new(response)
       end
     end
